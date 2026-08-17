@@ -1,0 +1,12 @@
+{
+    "name": "Leaf Icons",
+    "iconDefinitions": {
+        "leaf-icon": {
+            "iconPath": "./icons/leaf.png"
+        }
+    },
+    "fileExtensions": {
+        "leaf": "leaf-icon",
+        "lf": "leaf-icon"
+    }
+}

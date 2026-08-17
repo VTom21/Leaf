@@ -1,0 +1,37 @@
+{
+  "name": "leaf",
+  "displayName": "Leaf",
+  "description": "leaf",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "leaf",
+      "aliases": ["Leaf", "leaf"],
+      "extensions": [".leaf",".lf"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "leaf",
+      "scopeName": "source.leaf",
+      "path": "./syntaxes/leaf.tmLanguage.json"
+    }],
+    "iconThemes": [
+        {
+            "id": "leaf-icons",
+            "label": "Leaf Icons",
+            "path": "./icon-theme.json"
+        }
+    ],
+    "configurationDefaults": {
+      "emmet.includeLanguages": {
+        "leaf": "html"
+      }
+    }
+  }
+}
