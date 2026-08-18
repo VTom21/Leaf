@@ -33,6 +33,80 @@ const helpers = {
     first: (array) => array[0],
     last: (array) => array[array.length - 1],
 };
+function renderWhen(template, data) {
+    return template.replace(/\{\{#when\s+(.+?)\}\}\s*\n?([\s\S]*?)\n?\s*\{\{endwhen\}\}/g, (_, condition, content) => {
+        function checkCondition(condition) {
+            condition = condition.trim();
+            // age > 15
+            const match = condition.match(/^(.+?)\s*(===|!==|==|!=|>=|<=|>|<)\s*(.+)$/);
+            if (match) {
+                const left = getValue(data, match[1].trim());
+                let right = match[3]?.trim();
+                // Remove quotes
+                if ((right.startsWith('"') && right.endsWith('"')) ||
+                    (right.startsWith("'") && right.endsWith("'"))) {
+                    right = right.slice(1, -1);
+                }
+                // Number
+                else if (!isNaN(Number(right))) {
+                    right = Number(right);
+                }
+                // Boolean
+                else if (right === "true") {
+                    right = true;
+                }
+                else if (right === "false") {
+                    right = false;
+                }
+                // Variable
+                else {
+                    right = getValue(data, right);
+                }
+                switch (match[2]) {
+                    case ">":
+                        return left > right;
+                    case "<":
+                        return left < right;
+                    case ">=":
+                        return left >= right;
+                    case "<=":
+                        return left <= right;
+                    case "==":
+                        return left == right;
+                    case "===":
+                        return left === right;
+                    case "!=":
+                        return left != right;
+                    case "!==":
+                        return left !== right;
+                }
+            }
+            // Normal condition:
+            // {{#when isAnimal}}
+            return Boolean(getValue(data, condition));
+        }
+        const parts = content.split(/\n?\s*\{\{(orwhen\s+.+?|otherwise)\}\}\s*\n?/);
+        if (checkCondition(condition)) {
+            return parts[0].trim();
+        }
+        for (let i = 1; i < parts.length; i += 2) {
+            const branch = parts[i];
+            const branchContent = parts[i + 1] ?? "";
+            if (branch.startsWith("orwhen ")) {
+                const orCondition = branch
+                    .replace("orwhen ", "")
+                    .trim();
+                if (checkCondition(orCondition)) {
+                    return branchContent.trim();
+                }
+            }
+            if (branch === "otherwise") {
+                return branchContent.trim();
+            }
+        }
+        return "";
+    });
+}
 function renderString(template, data) {
     return template.replace(/\[\<(.*?)\>\]/g, (_, content) => {
         const [name, ...args] = content.trim().split(/\s+/);
@@ -65,18 +139,44 @@ function render(path, data) {
     template = template.replace(/\<\<(.*?)\>\>/g, (_, name) => {
         return component(name, data);
     });
-    template = template.replace(/\{\{#each\s+(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g, (_, name, content) => {
-        return data[name].map((item, index) => renderString(content, { ...item, $index: index })).join("");
+    template = template.replace(/\{\{#cycle\s+(\w+)\}\}\s*\n?([\s\S]*?)\n?\s*\{\{endcycle\}\}/g, (_, name, content) => {
+        return data[name]
+            .map((item, index) => {
+            const itemData = {
+                ...item,
+                $index: index
+            };
+            let result = renderWhen(content, itemData);
+            result = renderString(result, itemData);
+            return result.trim();
+        })
+            .join("\n");
     });
-    template = template.replace(/\{\{#if\s+(\w+)\}\}([\s\S]*?)(?:\{\{else\s+if\s+(\w+)\}\}([\s\S]*?))?(?:\{\{else\}\}([\s\S]*?))?\{\{\/if\}\}/g, (_, condition, yes, elseIfCondition, elseIfContent, no) => {
+    template = template.replace(/\{\{#when\s+(\w+)\}\}([\s\S]*?)\{\{endwhen\}\}/g, (_, condition, content) => {
+        const parts = content.split(/\{\{(orwhen\s+\w+|otherwise)\}\}/);
+        // #when
         if (data[condition]) {
-            return yes;
+            return parts[0];
         }
-        if (elseIfCondition && data[elseIfCondition]) {
-            return elseIfContent;
+        // orwhen / otherwise
+        for (let i = 1; i < parts.length; i += 2) {
+            const branch = parts[i];
+            const branchContent = parts[i + 1] ?? "";
+            if (branch.startsWith("orwhen ")) {
+                const orCondition = branch
+                    .replace("orwhen ", "")
+                    .trim();
+                if (data[orCondition]) {
+                    return branchContent;
+                }
+            }
+            if (branch === "otherwise") {
+                return branchContent;
+            }
         }
-        return no ?? "";
+        return "";
     });
+    template = renderWhen(template, data);
     return renderString(template, data);
 }
 //# sourceMappingURL=main.js.map

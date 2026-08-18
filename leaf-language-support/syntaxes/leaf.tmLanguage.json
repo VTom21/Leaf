@@ -1,35 +1,78 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "Leaf",
-	"patterns": [
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		},
-		{
-			"include": "text.html.basic"
-		}
-	],
-	"repository": {
-		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.leaf",
-				"match": "\\b(if|while|for|return)\\b"
-			}]
-		},
-		"strings": {
-			"name": "string.quoted.double.leaf",
-			"begin": "\"",
-			"end": "\"",
-			"patterns": [
-				{
-					"name": "constant.character.escape.leaf",
-					"match": "\\\\."
-				}
-			]
-		}
-	},
-	"scopeName": "source.leaf"
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Leaf",
+  "patterns": [
+      {
+      "include": "#helpers"
+    },
+    {
+      "include": "#custom-tags"
+    },
+	{
+      "include": "#delimiters"
+  	},
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "text.html.basic"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.leaf",
+          "match": "(#cycle|endcycle|#when|orwhen|otherwise)\\b"
+        }
+      ]
+    },
+    "helpers": {
+      "patterns": [
+        {
+          "name": "helper.leaf",
+          "match": "(upper|lower|strlen|evaluate|reverse|trim|add|subtract|multiply|divide|min|max|round|absolute|randomFloat|randomInt|first|last)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.leaf",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.leaf",
+          "match": "\\\\."
+        }
+      ]
+    },
+"delimiters": {
+  "patterns": [
+    {
+      "name": "punctuation.leaf.braces",
+      "match": "[{}]"
+    },
+    {
+      "name": "punctuation.leaf.brackets",
+      "match": "[\\[\\]]"
+    },
+    {
+      "name": "punctuation.leaf.angles",
+      "match": "[<>]"
+    }
+  ]
+},
+"custom-tags": {
+  "patterns": [
+    {
+      "name": "entity.name.tag.leaf",
+      "match": "(?<=</?)[a-zA-Z][a-zA-Z0-9-]*"
+    }
+  ]
+}
+  },
+  "scopeName": "source.leaf"
 }

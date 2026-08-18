@@ -10,27 +10,77 @@
     "Programming Languages"
   ],
   "contributes": {
-    "languages": [{
-      "id": "leaf",
-      "aliases": ["Leaf", "leaf"],
-      "extensions": [".leaf",".lf"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "leaf",
-      "scopeName": "source.leaf",
-      "path": "./syntaxes/leaf.tmLanguage.json"
-    }],
-    "iconThemes": [
-        {
-            "id": "leaf-icons",
-            "label": "Leaf Icons",
-            "path": "./icon-theme.json"
+    "languages": [
+      {
+        "id": "leaf",
+        "aliases": [
+          "Leaf",
+          "leaf"
+        ],
+        "extensions": [
+          ".leaf",
+          ".lf"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/leaf.png",
+          "dark": "./icons/leaf.png"
         }
+      }
     ],
+
+    "grammars": [
+      {
+        "language": "leaf",
+        "scopeName": "source.leaf",
+        "path": "./syntaxes/leaf.tmLanguage.json"
+      }
+    ],
+
     "configurationDefaults": {
       "emmet.includeLanguages": {
         "leaf": "html"
+      },
+
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "keyword.leaf",
+            "settings": {
+              "foreground": "#FFA500"
+            }
+          },
+          {
+            "scope": "helper.leaf",
+            "settings": {
+              "foreground": "#FF1493"
+            }
+          },
+          {
+            "scope": "punctuation.leaf.braces",
+            "settings": {
+              "foreground": "#56B6C2"
+            }
+          },
+          {
+            "scope": "punctuation.leaf.brackets",
+            "settings": {
+              "foreground": "#98C379"
+            }
+          },
+          {
+            "scope": "punctuation.leaf.angles",
+            "settings": {
+              "foreground": "#FFA500"
+            }
+          },
+          {
+            "scope": "entity.name.tag.leaf",
+            "settings": {
+              "foreground": "#61AFEF"
+            }
+          }
+        ]
       }
     }
   }
